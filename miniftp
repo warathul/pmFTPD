@@ -1,0 +1,77 @@
+#!/usr/bin/perl -w
+#
+# Miniftp
+# (c) 1999 Philipp Knirsch
+#
+# This is just a simple demonstration program to study the behaviour of a
+# ftp client program.
+#
+use IO::Socket;
+
+#
+# doCommand subroutine. Takes a command and an expected reply as argument
+#
+sub doCommand {
+  my($command, $reply) = @_;
+  print $remote "$command\r\n";
+  waitForReply($reply);
+}
+
+#
+# waitForReply subroutine. Takes an expected reply number as argument
+#
+sub waitForReply {
+  my($reply) = @_;
+
+  do {
+      $line = <$remote>;
+      ($comm, $data) = split(/[ -]/, $line, 2);
+      print $line;
+  } while($comm!= $reply);
+}
+
+$remote = IO::Socket::INET->new(
+              Proto    => "tcp",
+              PeerAddr => "ftp-stud.hs-esslingen.de",
+              PeerPort => "ftp",
+          )
+          or die "cannot connect to ftp port at localhost";
+
+waitForReply(220);
+doCommand("USER ftp", 331);
+doCommand("PASS phil@", 230);
+doCommand("PASV", 227);
+
+$data =~ s/.*\(//;	# Extract the PASV data from the server. Looks like:
+$data =~ s/\).*//;	# Entering Passive Mode (127,0,0,1,64,88)...
+
+($ip1, $ip2, $ip3, $ip4, $porthi, $portlo) = split(/,/,$data);
+
+$datacon = IO::Socket::INET->new(
+               Proto    => "tcp",
+               PeerAddr => $ip1.".".$ip2.".".$ip3.".".$ip4,
+               PeerPort => $porthi*256 + $portlo
+           )
+           or die "cannot connect to ftp port at localhost";
+
+#
+# Logged in now and in passive mode
+#
+
+doCommand("CWD pub/linux/kernel", 250);
+doCommand("TYPE I", 200);
+doCommand("NLST .", 150);
+
+#
+# Get data
+#
+while (<$datacon>) {
+  print $_;
+}
+
+waitForReply(226);
+
+#
+# Quit
+#
+doCommand("QUIT", 221);

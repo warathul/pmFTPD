@@ -1,0 +1,37 @@
+  pmFTPD 0.5b
+
+  (c) 1999 Philipp Knirsch
+
+pmFTPD is a very simple and small ftp server for UNIX machines. The main
+design goal was to keep it as simple as possible with only the basic
+functionality and have everything needed in a single application.
+The configuration itself is done in one single file with only a couple
+of parameters.
+
+The additional feature though that sets it really appart from other open
+source ftp servers is the capability to use a SQL database for user verifi-
+cation. The functionality has been tested with the MySQL, Oracle 8.05 and
+DB2 databases and appropriate modules are included for those databases.
+
+Another feature which only very few servers have is bandwidth limits for
+each transfer. This way one can give pretty good estimates on how much data
+at max will be transfered over the line for a given number of simultaneous
+clients.
+
+For suggestions and/or bug reports just send them to the address given
+below, prefered to the email address ;).
+
+Have fun,
+
+Read ya, Phil
+
+
+Philipp Knirsch
+Peter-Imhoffstr. 57
+
+72138 Kirchentellinsfurt
+Germany
+
+email: phil@linux.de
+fon:   +49 (0)7121 907033
+web:   http://www.wizards.de/phil/

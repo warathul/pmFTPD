@@ -1,0 +1,79 @@
+#
+# Sample configuration file for the pmFTPD.
+#
+# Hostname on which the server shall listen. Can be anything as long as there
+# is an IP address associated with it. Leave it empty and the server will
+# listen on the interface found with gethostname().
+#
+# Hostname = kleo.eye.medizin.uni-tuebingen.de
+
+#
+# Port on which the server will listen. Default is port 21, the standard FTP
+# PI port.
+#
+Port = 4567
+
+#
+# Maximum speed for a single transfer. With this option you can reduce the
+# bandwidth being used by a single ftp session to the given maximum. Especially
+# in combination with a limited numer of allowed clients at once this can
+# help to give a rough estimate of the maximum bandwith used by the whole
+# server. Important for people who have to pay per megabyte %^)
+#
+MaxSpeed = 0
+
+#
+# Database specific options
+#
+# This option lets you select which kind of database you want to use for user
+# verification. There are only three possible up to now, but several others
+# will be supported soon:
+#   Password		Standard good old fashioned password file 
+#   Oracle		Oracle 8.0.5 with OCI.
+#   DB2			IBM DB2 5.2 with CLI.
+#
+DatabaseType = Password
+
+#
+# Hostname for the database. Unused for now, but needed for later use of Net8
+# on Oracle and MySQL.
+#
+DatabaseHost = db.mydomain.de
+
+#
+# Name of the database. Needed only by databases which support multiple
+# databases per user. Not needed for Passwd.
+#
+DatabaseName = test
+
+#
+# Username with which the database shall be accessed. Needed only by real
+# databases, Password works without it. For all others mandatory.
+#
+DatabaseUser = test
+
+#
+# Password of the database user. I know, it's not nice to have it as plain text
+# in here, but i can't see a way around it. Let your DBA set up a user who has
+# only extremely limited access to the database (only SELECT on a single users
+# table is usually needed).
+#
+DatabasePass = test
+
+#
+# Name of the users table. The minimal assumption here is that you use one
+# table to store the usernames and password for the verification. Shouldn't
+# be too restrictive :).
+#
+DatabaseTable = users
+
+#
+# Name of the username field. Might be anything you like and use. Should only
+# logically comply with your database.
+#
+DatabaseUField = username
+
+#
+# Name of the password field in the users table. Same as above is also valid.
+#
+DatabasePField = password

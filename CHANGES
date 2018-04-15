@@ -1,0 +1,272 @@
+4/15/18:        Version 0.7
+        Fixed the pmAuth.c::UserValid() function to work properly on modern
+        Linux systems. Didn't use PAM yet, but if getspnam() or getpwnam()
+        return the proper salt+encrypted PW we're golden.
+2/25/99:	Version 0.6
+	Only some little changes, final fixes to the Oracle module and a
+	GetValue() function in the config module to allow easier command line
+	parsing.
+	Included the snprintf() function of the Samba project as some systems
+	obviously still don't have snprintf()... *sigh*
+	Changed all C++ style comments to C style comments as some C compilers
+	still don't understand them (SGI for example ;).
+	First version running on SGI without any major changes.
+
+2/24/99:	Version 0.5b
+	Yes! Now the Oracle module works as well. This one was a little
+	trickier as the OCI calls really get tons of silly parameters which
+	i basically all kinda ignore up to now ;).
+	So we now have user authentification for both big databases for Linux.
+	The MySQL module will follow shortly, but thats an easy one.
+	Cleaned up the database module code a little as it has been quite a
+	hack in the first release.
+	Also prepared the Makefile correctly to support compilation for any
+	kind of database. Default is always the password verification, but
+	Oracle and/or DB2 can be compiled now as well.
+	Also changed the necessary things in the basic authentification module
+	to now support Oracle and/or DB2 as well if pmFTPD was compiled with
+	these options.
+
+2/23/99:	Version 0.5a
+	Now i even understand the authentification and authorization process
+	of DB2. Kinda neat, although i guess using host mechanisms to do the
+	authentification can lead to serious trouble on systems like DOS or
+	Windows 95 where you just don't have any real security or user and
+	group management.
+	Yahoo! The DB2 module works now! It's actually really easy, just a
+	little more complex than with the MySQL library. I guess thats all
+	needed because of the optimizer and stuff like that. At least, what
+	we really want in the end is a FAST database.
+
+2/22/99:
+	Got a lot of documentation for both databases, mostly admin for DB2 
+	and a lot of programming stuff for Oracle.
+	Finally grasped the concept of descriebing, defining and binding 
+	in these databases.
+
+2/21/99:
+	Got both Databases and the demos up and running. Still don't quite
+	understand some administrative things about the DB2 and some concept
+	and programming problems with both of them, although the DB2 looks a
+	lot easier.
+
+2/20/99:
+	First steps in the DB user authentification modules. Installed the
+	IBM Universal Developers's Edition Version 5.2 for Linux and the
+	Oracle8 Release 8.0.5 for Linux.
+	Fiddled with the Databases for some time to get to understand them
+	both, they are quite a bit different from simple databases like MySQL.
+
+2/19/99:	Version 0.4b
+	Changed the authentification module to at least use the 'normal'
+	passwd based authentification process. Uses the shadow method of Linux,
+	but changing it to the 'old-style' password type would be very easy.
+	Fixed nasty bug in ASCII RETR command where i read too many characters.
+	Minor fixes in the command module, finished the ConvertXXX() functions.
+	Began with the configuration module. Works now already for the
+	important parameters, like hostname to listen on, port number, maximum
+	speed per connection (yes, i just thought what the heck, i'll put that
+	in as well, now you can limit the transferspeed to n kilobytes per
+	second. Neat, eh?! :).
+
+2/18/99:	Version 0.4
+	Again a new version?! Sure, as i have now implemented and fixed all
+	commands i wanted to have we are now ready for a new release!
+	Completed the work on the PASV command, should work now as expected
+	and quite stable.
+
+	Here now the list of implemented commands:
+
+		USER
+		PASS
+		CWD
+		CDUP (works now as expected)
+		QUIT
+		PORT
+		PASV (first version, but works without a flaw :)
+		TYPE (completely to spec, Ascii Non-print and Image)
+		STRU (completely to spec, File and Record)
+		MODE (completely to spec, only Stream)
+		RETR (for type IMAGE)
+		STOR (for type IMAGE)
+		REST (works for RETR and STOR, just like wuftpd)
+		RNFR (Uses similar procedure as the ABOR command, quite nice)
+		RNTO
+		ABOR (not quite correct yet, but i'll fix that)
+		RMD
+		MKD
+		PWD
+		LIST (complete version, nearly like wuftpd)
+		NLST (also complete, like wuftpd)
+		SITE (Oh boy, really easy one, just say we don't need anything)
+		SYST (easy one)
+		STAT (Similar to list, only transfer happens over PI)
+		HELP (Very basic help only yet... Client takes care of it)
+		NOOP (wow now brown cow)
+
+	The list of not-to-be-implemented commands hasen't changed. If anyone
+	should need it i might think about it, but for now i am happy with
+	the commands i have implemented up to now.
+	Fixed a problem with netscape which expected the format of the LIST
+	command to be of a very fixed format. The download button behind
+	the files still doesn't work, i might fix that sometime later
+	(netscape appends a ;type=i to the filename... how am i supposed
+	to download a file with ;type=i at the end of the name?!? Idiots...)
+	Added two extension commands used by netscape:
+	MDTM <file>: Returns 213 yyyymmddhhmmss  for a regualar file
+	SIZE <file>: Retursn 213 filesiye  (depending on the TYPE!)
+        Finaly also fixed the ASCII transfer to work correctly. Implemented
+	two new functions, ConverToNVT() and ConvertFromNVT() for that.
+	Small bug in PASV mode: Passive mode has to be rerequested by the
+	client every time a transfer is done, so i have to turn of passive
+	mode after a completed dtp transfer.
+
+2/17/99:	Version 0.3b
+	Fixed the ABOR handling finaly. In extreme cases it might still happen
+	that we get the 226 before we get the 426, but usually not.
+	Added two new functions to the network module:
+	  CheckPI() checks if there are commands waiting from the client-pi
+	  HandlePI() handles a single command from the client-pi
+	Usefull for the abort thing and maybe later for other command related
+	things.
+	RNFR and RNTO implemented. Should work out of the box now.
+	SITE is implemented :) And already was :) It's only for site specific
+	options which the server might need for various things, but this
+	is a standalone just-do-it server. :)
+	Worked quite a bit on the passive mode, but in the end i figured i
+	probably shouldn't use INADDR_ANY as the listener addresses as the
+	getsockname() call will return a 0.0.0.0 logically as address on which
+	we listen :)
+
+2/16/99:	Version 0.3a
+	Ah well, as always... The ABOR command didn't work correctly and is
+	still not 100% according to spec, but it works at least now and the
+	server responds correctly to the Telnet protocol IP and Synch commands.
+	Added some more comments to the various handlers and cleaned up some
+	portions.
+	Fixed the CDUP command. It should be a CWD .., nothing else. :)
+	Added the dtp loss code in the LIST and NLST commands now as well.
+	Finally got to implement the REST command as well, fairly easy
+	actually.
+	Also did the STAT, kinda nice to transfer the file list over the PI
+	instead of the dtp.
+	And did a bare bones version of the HELP command.
+	Here again now the list of supported commands:
+
+		USER
+		PASS
+		CWD
+		CDUP (works now as expected)
+		QUIT
+		PORT
+		TYPE (completely to spec, Ascii Non-print and Image)
+		STRU (completely to spec, File and Record)
+		MODE (completely to spec, only Stream)
+		RETR (for type IMAGE)
+		STOR (for type IMAGE)
+		REST (works for RETR and STOR, just like wuftpd)
+		ABOR (not quite correct yet, but i'll fix that)
+		RMD
+		MKD
+		PWD
+		LIST (complete version, nearly like wuftpd)
+		NLST (also complete, like wuftpd)
+		SYST (easy one)
+		STAT (Similar to list, only transfer happens over PI)
+		HELP (Very basic help only yet... Client takes care of it)
+		NOOP (wow now brown cow)
+
+	Commands pending to be implemented:
+
+		PASV (Probably the most important one, especially for fire-
+		      walled people out there...)
+		RNFR (Not sooo important, but it's a would-be-nice-to-have)
+		RNTO                             "
+		SITE (Have to check what it does exactly :)
+
+	Commands that i won't implement at all as i don't think they will ever
+	be needed:
+
+		ACCT (I haven't seen anyone use it so i skip it)
+		SMNT (Who on earth needs this one???)
+		REIN (Just relogon please...)
+		STOU (Unique store?! I think anyone with at least brain cell
+		      doesn't need this one!!!)
+		APPE (A REST combined with a STOR does the same thing...)
+		ALLO (I don't need to allocate memory for a file on UNIX).
+
+2/15/99:	Version 0.3
+	LIST command finished. It now really looks like the original wuftpd
+	one.
+	PWD now works (easy one).
+	NLST implemented like the wuftpd version (very easy, derived from LIST)
+	MKD works
+	RMD works
+	DELE works, too
+	STOR works now, too!!! So we finally have real up and download!!! :)
+	TYPE fixed to support A(scii) N(on-print) and I(mage) transfer type.
+	STRU implemented to allow structure F(ile) and R(ecord). (although
+	structure record won't be handled differently... ;).
+	MODE implemented to allow only mode S(tream) :)
+	I guess it is time to call this a stable release, therefor we now
+	go to version 0.3. We now support all necessary commands as specified
+	in the RFC959.
+
+2/13/99:	Version 0.2c
+	Continued work on the LIST command, started a wuftpd like output
+	for the files. The problem is that we won't be able to determine the
+	uid/gid of the file as we get the username/password verification from
+	the database. We could output the unix username and group of that file,
+	but i guess that won't make too much sense... :)
+
+2/12/99:	Version 0.2b
+	More commands implemented: CDUP and CDW work now, USER & PASS now work
+	correctly and as expected, SYST works OK, RETR now does for IMAGE
+	transfers what it should do, NOOP works (tough one, man!) ;)
+	Performance is quite nice (2.5% CPU on a P133 while transfering with
+	250 KB/sec).
+
+        Here the list of working commands:
+
+		USER
+		PASS
+		CWD
+		CDUP (not as expected, changes dir to / ;))
+		QUIT
+		PORT
+		TYPE (partially)
+		RETR (for type IMAGE)
+		LIST (bare bones version)
+		SYST (easy one)
+		NOOP (wow now brown cow)
+
+	Fixed the login/password behaviour for the implemented commands. Now
+	the commands which need a login really work only after a successful
+	login. ;)
+	Did the first bare bones version of the authentification module
+	(it just got necessary as users now can really download files ;).
+	Started work on the integrated LIST command.
+
+2/11/99:	Version 0.2
+	First multi client server version, fixed a bug in the waitpid method
+	and rearranged the AcceptConnection() to work with a select() call
+	rather than wait for the next accept() (This prevents the zombie
+	processes easily and we can do some 'cleanup' now every n seconds
+	in the server).
+	First implementation of the RETR command, doesn't work correctly yet.
+        Needed for that was the PORT as well which also works ok now.
+	Did the whole documnetation and the remaining cleanup of the previous
+	version.
+
+2/10/99:	Version 0.1
+	Made a real project out of this study. Main idea was to get to a point
+	where the server can be used in conjunction with a SQL database for
+	user verification to be used for huge portal sites that need to support
+	ftp as well.
+	Cleaned up the code as well a little bit and already provided complete
+	handling of all the commands specified in the RFC959 although most
+	are still unimplemented.
+
+2/9/99:		Initial version 0.01
+	First version with only one single file, mainly a design study for
+	how the FTP protocol works.

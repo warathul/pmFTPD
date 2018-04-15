@@ -1,0 +1,18 @@
+2/10/99: Thinking about data structures on how to handle multiple clients.
+	 Basic step is to handle all IO with select() call and act upon
+         it.
+         First idea of database user verification (DUV):
+
+         Parameters in config file with the following entries:
+
+         DatabaseType = <type of the DB: MySQL, Oracle, DB2, Adabas>
+         DatabaseHost = <hostname>
+         DatabaseName = <name of database>
+         DatabaseUser = <name of the user with the appropriate read privs>
+         DatabasePass = <password of that user for the DB>
+         DatabaseTable = <name of the table which contains usernames/passwords>
+         DatabaseUserField = <fieldname of the username in table>
+         DatabasePassField = <fieldname of the password in table>
+
+         That should sum it up pretty well.
+
